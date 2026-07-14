@@ -60,35 +60,35 @@ select:focus,input:focus{outline:none;border-color:#0f3460;box-shadow:0 0 0 3px 
 </head>
 <body>
 <div class="header">
-<h1>🌎 拉美跨境电商工具箱</h1>
+<h1>Latam Tax Calculator</h1>
 <p>汇率 · 税率 · 利润计算</p>
 </div>
 <div class="container">
 <div class="tabs">
-<button class="tab-btn active" onclick="switchTab('exchange')">💱 汇率换算</button>
-<button class="tab-btn" onclick="switchTab('tax')">🧮 税率计算</button>
-<button class="tab-btn" onclick="switchTab('profit')">📊 利润计算</button>
+<button class="tab-btn active" data-tab="exchange">汇率换算</button>
+<button class="tab-btn" data-tab="tax">税率计算</button>
+<button class="tab-btn" data-tab="profit">利润计算</button>
 </div>
 <div id="tab-exchange" class="tab-content active">
 <div class="card">
-<h2>💱 实时汇率换算 <span id="liveBadge"></span></h2>
+<h2>实时汇率换算 <span id="liveBadge"></span></h2>
 <div class="source-bar"><span class="icon">⚠️</span>汇率来自 exchangerate-api.com 实时数据，自动刷新。建议下单前以银行/支付平台为准。</div>
 <div class="form-row">
 <div><label>从</label>
 <select id="fromCurrency" onchange="updateExchange()">
-<option value="CNY">🇨🇳 人民币 (CNY)</option>
-<option value="USD">🇺🇸 美元 (USD)</option>
+<option value="CNY">人民币 (CNY)</option>
+<option value="USD">美元 (USD)</option>
 </select>
 <input type="number" id="exchangeAmount" placeholder="输入金额" value="1000" oninput="updateExchange()" style="margin-top:6px;"></div>
 <div><label>到</label>
 <select id="toCurrency" onchange="updateExchange()">
-<option value="BRL">🇧🇷 巴西雷亚尔 (BRL)</option>
-<option value="MXN">🇲🇽 墨西哥比索 (MXN)</option>
-<option value="ARS">🇦🇷 阿根廷比索 (ARS)</option>
-<option value="COP">🇨🇴 哥伦比亚比索 (COP)</option>
-<option value="CLP">🇨🇱 智利比索 (CLP)</option>
-<option value="PEN">🇵🇪 秘鲁索尔 (PEN)</option>
-<option value="USD">🇺🇸 美元 (USD)</option>
+<option value="BRL">巴西雷亚尔 (BRL)</option>
+<option value="MXN">墨西哥比索 (MXN)</option>
+<option value="ARS">阿根廷比索 (ARS)</option>
+<option value="COP">哥伦比亚比索 (COP)</option>
+<option value="CLP">智利比索 (CLP)</option>
+<option value="PEN">秘鲁索尔 (PEN)</option>
+<option value="USD">美元 (USD)</option>
 </select>
 <div class="currency-display" id="exchangeResult">
 <div class="big" id="exchangeOutput">加载中...</div>
@@ -96,37 +96,37 @@ select:focus,input:focus{outline:none;border-color:#0f3460;box-shadow:0 0 0 3px 
 </div></div>
 </div>
 <div style="text-align:center;"><button class="swap-btn" onclick="swapCurrency()" title="互换货币">⇄</button></div>
-<div class="disclaimer">💡 提示：拉美多国对美元结算更友好，建议收款时优先使用 USD。部分国家如阿根廷有官方汇率和黑市汇率差异。</div>
+<div class="disclaimer">提示：拉美多国对美元结算更友好，建议收款时优先使用 USD。部分国家如阿根廷有官方汇率和黑市汇率差异。</div>
 </div></div>
 <div id="tab-tax" class="tab-content">
 <div class="card">
-<h2>🧮 进口税费估算</h2>
+<h2>进口税费估算</h2>
 <div class="source-bar"><span class="icon">⚠️</span>以下税率为进口环节参考税率，实际以各国海关核定为准。不含增值税抵扣、免税额度等特殊情况。</div>
 <label>选择国家</label>
 <select id="countrySelect" style="margin-bottom:14px;">
-<optgroup label="🇧🇷 巴西">
+<optgroup label="巴西">
 <option value="BR-NATIONAL">PIS + COFINS (联邦综合 9.25%)</option>
 <option value="BR-SP">ICMS 圣保罗州 (18%)</option>
 <option value="BR-RJ">ICMS 里约热内卢州 (17%)</option>
 <option value="BR-ISS">ISS 服务税 (约 5%)</option>
 </optgroup>
-<optgroup label="🇲🇽 墨西哥">
+<optgroup label="墨西哥">
 <option value="MX">IVA 标准 (16%)</option>
 <option value="MX-BORDER">IVA 边境区 (8%)</option>
 </optgroup>
-<optgroup label="🇦🇷 阿根廷">
+<optgroup label="阿根廷">
 <option value="AR">IVA 标准 (21%)</option>
 <option value="AR-REDUCED">IVA 减免 (10.5%)</option>
 <option value="AR-GROSS">Ingresos Brutos 省税 (~3.5%)</option>
 </optgroup>
-<optgroup label="🇨🇴 哥伦比亚">
+<optgroup label="哥伦比亚">
 <option value="CO">IVA 标准 (19%)</option>
 <option value="CO-REDUCED">IVA 减免 (5%)</option>
 </optgroup>
-<optgroup label="🇨🇱 智利">
+<optgroup label="智利">
 <option value="CL">IVA 标准 (19%)</option>
 </optgroup>
-<optgroup label="🇵🇪 秘鲁">
+<optgroup label="秘鲁">
 <option value="PE">IGV 标准 (18%)</option>
 </optgroup>
 </select>
@@ -150,7 +150,7 @@ select:focus,input:focus{outline:none;border-color:#0f3460;box-shadow:0 0 0 3px 
 </div></div></div>
 <div id="tab-profit" class="tab-content">
 <div class="card">
-<h2>📊 跨境订单利润计算器</h2>
+<h2>跨境订单利润计算器</h2>
 <div class="source-bar"><span class="icon">💡</span>输入订单信息，自动计算各项成本和净利润率。帮助快速评估订单盈亏。</div>
 <div class="form-row">
 <div><label>销售价 (本币)</label>
@@ -167,14 +167,14 @@ select:focus,input:focus{outline:none;border-color:#0f3460;box-shadow:0 0 0 3px 
 <div class="form-row">
 <div><label>目标国家</label>
 <select id="profitCountry" onchange="calculateProfit()">
-<option value="BR-NATIONAL">🇧🇷 巴西</option>
-<option value="MX">🇲🇽 墨西哥</option>
-<option value="AR">🇦🇷 阿根廷</option>
-<option value="CO">🇨🇴 哥伦比亚</option>
-<option value="CL">🇨🇱 智利</option>
-<option value="PE">🇵🇪 秘鲁</option>
+<option value="BR-NATIONAL">巴西</option>
+<option value="MX">墨西哥</option>
+<option value="AR">阿根廷</option>
+<option value="CO">哥伦比亚</option>
+<option value="CL">智利</option>
+<option value="PE">秘鲁</option>
 </select></div>
-<div><label>汇率 (1 CNY → ?)</label>
+<div><label>汇率 (1 CNY -> ?)</label>
 <input type="number" id="fxRate" placeholder="自动填充" step="0.0001" oninput="calculateProfit()"></div>
 </div>
 <div class="form-row">
@@ -197,7 +197,16 @@ select:focus,input:focus{outline:none;border-color:#0f3460;box-shadow:0 0 0 3px 
 <p>如有疑问请联系客服 | 汇率来源：exchangerate-api.com</p>
 </div>
 <script>
-function switchTab(n){document.querySelectorAll('.tab-btn').forEach((b,i)=>{b.classList.toggle('active',['exchange','tax','profit'][i]===n)});document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));document.getElementById('tab-'+n).classList.add('active')}
+document.querySelectorAll('.tab-btn').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var tabName=this.getAttribute('data-tab');
+    document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+    this.classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active')});
+    document.getElementById('tab-'+tabName).classList.add('active');
+  });
+});
+
 var liveRates=null;
 var FALLBACK_RATES={CNY_BRL:.752,CNY_MXN:2.18,CNY_ARS:1085,CNY_COP:4650,CNY_CLP:985,CNY_PEN:.52,CNY_USD:.137,USD_CNY:7.3,USD_BRL:5.49,USD_MXN:15.92,USD_ARS:7920,USD_COP:33900,USD_CLP:7190,USD_PEN:3.8};
 var SYMBOLS={BRL:'R$',MXN:'MX$',ARS:'ARS$',COP:'COP$',CLP:'CL$',PEN:'S/',CNY:'¥',USD:'$'};
@@ -208,10 +217,10 @@ async function fetchRates(){
     var data=await resp.json();
     liveRates=data.rates;
     document.getElementById('liveBadge').innerHTML='<span class="live-badge">实时</span>';
-    console.log('✅ 汇率已更新:',new Date().toLocaleString('zh-CN'));
+    console.log('汇率已更新:',new Date().toLocaleString('zh-CN'));
     updateExchange();
   }catch(e){
-    console.warn('⚠️ 获取实时汇率失败，使用缓存:',e.message);
+    console.warn('获取实时汇率失败，使用缓存:',e.message);
     liveRates=null;
     document.getElementById('liveBadge').innerHTML='<span class="offline-badge">离线</span>';
     updateExchange();
