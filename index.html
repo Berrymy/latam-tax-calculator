@@ -47,6 +47,8 @@ select:focus,input:focus{outline:none;border-color:#0f3460;box-shadow:0 0 0 3px 
 .swap-btn:hover{border-color:#0f3460;background:#0f3460;color:#fff}
 .source-bar{display:flex;align-items:center;gap:6px;padding:10px 14px;background:#fffbe6;border:1px solid #ffe58f;border-radius:8px;font-size:12px;color:#ad6800;margin-bottom:18px;line-height:1.6}
 .source-bar .icon{font-size:16px;flex-shrink:0}
+.live-badge{display:inline-block;padding:2px 8px;background:#16a34a;color:#fff;border-radius:10px;font-size:10px;margin-left:8px}
+.offline-badge{display:inline-block;padding:2px 8px;background:#dc2626;color:#fff;border-radius:10px;font-size:10px;margin-left:8px}
 .footer{text-align:center;padding:24px 16px;font-size:12px;color:#bbb;line-height:1.8}
 .disclaimer{font-size:11px;color:#999;text-align:center;padding:8px;background:#fafafa;border-radius:6px;margin-top:10px;line-height:1.6}
 .summary-list{list-style:none;padding:0}
@@ -69,8 +71,8 @@ select:focus,input:focus{outline:none;border-color:#0f3460;box-shadow:0 0 0 3px 
 </div>
 <div id="tab-exchange" class="tab-content active">
 <div class="card">
-<h2>💱 实时汇率换算</h2>
-<div class="source-bar"><span class="icon">⚠️</span>汇率为参考值，实际以银行/支付平台为准。建议下单前确认最新汇率。</div>
+<h2>💱 实时汇率换算 <span id="liveBadge"></span></h2>
+<div class="source-bar"><span class="icon">⚠️</span>汇率来自 exchangerate-api.com 实时数据，自动刷新。建议下单前以银行/支付平台为准。</div>
 <div class="form-row">
 <div><label>从</label>
 <select id="fromCurrency" onchange="updateExchange()">
@@ -89,8 +91,8 @@ select:focus,input:focus{outline:none;border-color:#0f3460;box-shadow:0 0 0 3px 
 <option value="USD">🇺🇸 美元 (USD)</option>
 </select>
 <div class="currency-display" id="exchangeResult">
-<div class="big" id="exchangeOutput">-</div>
-<div class="small" id="exchangeRate">选择货币查看汇率</div>
+<div class="big" id="exchangeOutput">加载中...</div>
+<div class="small" id="exchangeRate">正在获取实时汇率</div>
 </div></div>
 </div>
 <div style="text-align:center;"><button class="swap-btn" onclick="swapCurrency()" title="互换货币">⇄</button></div>
@@ -173,7 +175,7 @@ select:focus,input:focus{outline:none;border-color:#0f3460;box-shadow:0 0 0 3px 
 <option value="PE">🇵🇪 秘鲁</option>
 </select></div>
 <div><label>汇率 (1 CNY → ?)</label>
-<input type="number" id="fxRate" placeholder="如 0.68" step="0.0001" oninput="calculateProfit()"></div>
+<input type="number" id="fxRate" placeholder="自动填充" step="0.0001" oninput="calculateProfit()"></div>
 </div>
 <div class="form-row">
 <div><label>其他费用 (人民币)</label>
@@ -192,19 +194,114 @@ select:focus,input:focus{outline:none;border-color:#0f3460;box-shadow:0 0 0 3px 
 </div>
 <div class="footer">
 <p>拉美跨境电商工具箱 · 数据仅供参考</p>
-<p>如有疑问请联系客服 | 数据更新于 2026-07-14</p>
+<p>如有疑问请联系客服 | 汇率来源：exchangerate-api.com</p>
 </div>
 <script>
 function switchTab(n){document.querySelectorAll('.tab-btn').forEach((b,i)=>{b.classList.toggle('active',['exchange','tax','profit'][i]===n)});document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));document.getElementById('tab-'+n).classList.add('active')}
-const EXR={CNY_BRL:.752,CNY_MXN:2.18,CNY_ARS:1085,CNY_COP:4650,CNY_CLP:985,CNY_PEN:.52,CNY_USD:.137,USD_CNY:7.3,USD_BRL:5.49,USD_MXN:15.92,USD_ARS:7920,USD_COP:33900,USD_CLP:7190,USD_PEN:3.8};
-function getRate(f,t){if(f===t)return 1;if(EXR[f+'_'+t])return EXR[f+'_'+t];const a=EXR[f+'_USD']||EXR[f+'_CNY'],b=EXR[t+'_USD']||EXR[t+'_CNY'];if(a&&b)return a/b;const c=EXR['USD_'+f],d=EXR['USD_'+t];if(c&&d)return d/c;return null}
-function updateExchange(){const f=document.getElementById('fromCurrency').value,t=document.getElementById('toCurrency').value,a=parseFloat(document.getElementById('exchangeAmount').value)||0,r=getRate(f,t);if(!r){document.getElementById('exchangeOutput').textContent='-';document.getElementById('exchangeRate').textContent='暂无汇率数据';return}const sm={BRL:'R$',MXN:'MX$',ARS:'ARS$',COP:'COP$',CLP:'CL$',PEN:'S/',CNY:'¥',USD:'$'};document.getElementById('exchangeOutput').textContent=(sm[t]||'')+' '+fn(r*a);document.getElementById('exchangeRate').textContent='1 '+f+' = '+fn(r)+' '+t}
-function swapCurrency(){const f=document.getElementById('fromCurrency'),t=document.getElementById('toCurrency');[f.value,t.value]=[t.value,f.value];updateExchange()}
-function fn(n){if(n>=1e4)return n.toFixed(0);if(n>=100)return n.toFixed(2);return n.toFixed(4)}
-const RD={"BR-NATIONAL":{rate:.0925,name:'PIS+COFINS(联邦)',symbol:'R$',note:'累计模式 PIS 1.65%+COFINS 7.6%=9.25%。数据来源：Receita Federal do Brasil。'},"BR-SP":{rate:.18,name:'ICMS 圣保罗州',symbol:'R$',note:'圣保罗州标准 ICMS 18%。跨州运输 SP外→SP 12%；SP→SP内 4%。CONFAZ Resolution 22/2024。'},"BR-RJ":{rate:.17,name:'ICMS 里约热内卢州',symbol:'R$',note:'里约热内卢州标准 ICMS 17%。SEF-RJ。'},"BR-ISS":{rate:.05,name:'ISS 服务税',symbol:'R$',note:'市级服务税通常 5%，各城市略有差异。'},MX:{rate:.16,name:'墨西哥 IVA(标准)',symbol:'MX$',note:'全国标准 IVA 16%。边境区 ZOFRI 为 8%。零税率适用于出口、农产品、药品等。SAT México。'},'MX-BORDER':{rate:.08,name:'墨西哥 IVA(边境区)',symbol:'MX$',note:'北部和南部边境特殊经济区享受 8% 优惠 IVA。SAT México。'},AR:{rate:.21,name:'阿根廷 IVA(标准)',symbol:'ARS$',note:'标准 IVA 21%。部分商品如新闻出版物、体育赛事 10.5%。AFIP Argentina。'},'AR-REDUCED':{rate:.105,name:'阿根廷 IVA(减免)',symbol:'ARS$',note:'减免税率 10.5%，适用于部分基本商品和服务。AFIP Argentina。'},'AR-GROSS':{rate:.035,name:'阿根廷 Ingresos Brutos',symbol:'ARS$',note:'省级毛税，各州不同约 1%-10%，通常 3.5%。可能与 IVA 叠加征收。各省税务当局。'},CO:{rate:.19,name:'哥伦比亚 IVA(标准)',symbol:'COP$',note:'标准 IVA 19%。部分必需品(食品、医疗、教育)适用 5% 或免税。DIAN Colombia。},'CO-REDUCED':{rate:.05,name:'哥伦比亚 IVA(减免)',symbol:'COP$',note:'减免税率 5%。DIAN Colombia。'},CL:{rate:.19,name:'智利 IVA',symbol:'CL$',note:'标准 IVA 19%。出口适用 0%。大部分商品和服务均征税。SERNAC Chile。'},PE:{rate:.18,name:'秘鲁 IGV',symbol:'S/',note:'General Sales Tax 18%。出口适用 0%。部分商品如粮食、图书免税。SUNAT Perú。'}};
-function fc(amt,c){const d=RD[c],s=d?d.symbol:'$';return s+' '+amt.toFixed(2).replace(/\\B(?=(\\d{3})+(?!\\d))/g,',')}
-function calculateTax(){const c=document.getElementById('countrySelect').value,a=parseFloat(document.getElementById('taxAmount').value),ct=document.getElementById('calcType').value;if(!c){alert('请先选择一个国家');return}if(isNaN(a)||a<=0){alert('请输入有效金额');return}const d=RD[c];if(!d)return;let sub,tax,total;if(ct==='add'){sub=a;tax=a*d.rate;total=a+tax}else{total=a;sub=a/(1+d.rate);tax=a-sub}document.getElementById('resSubtotal').textContent=fc(sub,c);document.getElementById('resTax').textContent=fc(tax,c);document.getElementById('resTotal').textContent=fc(total,c);const ne=document.getElementById('rateNote');const rs=d.rate<.01?(d.rate*100).toFixed(2)+'%':(d.rate*100).toFixed(d.rate<.1?2:0)+'%';ne.innerHTML='<strong>'+d.name+'</strong> · 税率 '+rs+'<br>'+d.note;const r=document.getElementById('taxResult');r.classList.remove('show');void r.offsetWidth;r.classList.add('show')}
-function calculateProfit(){const sp=parseFloat(document.getElementById('salePrice').value)||0,cp=parseFloat(document.getElementById('costPrice').value)||0,sc=parseFloat(document.getElementById('shippingCost').value)||0,pfp=(parseFloat(document.getElementById('platformFee').value)||0)/100,oc=parseFloat(document.getElementById('otherCost').value)||0,payfp=(parseFloat(document.getElementById('paymentFee').value)||0)/100,country=document.getElementById('profitCountry').value,fx=parseFloat(document.getElementById('fxRate').value)||0;const d=RD[country],sym=d?d.symbol:'$',tr=d?d.rate:0;const pf=sp*pfp,payf=sp*payfp,tax=sp*tr;const spCNY=fx>0?sp/fx:sp;const tc=cp+sc+(pf/fx)+(payf/fx)+(tax/fx)+oc;const profit=spCNY-tc;const pr=spCNY>0?(profit/spCNY*100):0;document.getElementById('prSale').textContent='¥'+spCNY.toFixed(2);document.getElementById('prCost').textContent='¥'+tc.toFixed(2);const pe=document.getElementById('prProfit');pe.textContent='¥'+profit.toFixed(2);pe.className='result-value '+(profit>=0?'profit':'loss');const su=document.getElementById('prSummary');su.innerHTML='<li><span>销售价 ('+sym+' '+sp.toFixed(2)+')</span><span>¥'+spCNY.toFixed(2)+'</span></li><li><span>商品成本</span><span>-¥'+cp.toFixed(2)+'</span></li><li><span>运费</span><span>-¥'+sc.toFixed(2)+'</span></li><li><span>平台佣金 ('+(pfp*100).toFixed(0)+'%)</span><span>-¥'+(pf/fx).toFixed(2)+'</span></li><li><span>付款手续费 ('+(payfp*100).toFixed(0)+'%)</span><span>-¥'+(payf/fx).toFixed(2)+'</span></li><li><span>进口税费 ('+(tr*100).toFixed(0)+'%)</span><span>-¥'+(tax/fx).toFixed(2)+'</span></li><li><span>其他费用</span><span>-¥'+oc.toFixed(2)+'</span></li><li><span>净利润率</span><span class=\''+(pr>=0?'highlight-green':'highlight-red')+'\'>' + pr.toFixed(1) + '%</span></li>';document.getElementById('profitResult').classList.add('show')}
+var liveRates=null;
+var FALLBACK_RATES={CNY_BRL:.752,CNY_MXN:2.18,CNY_ARS:1085,CNY_COP:4650,CNY_CLP:985,CNY_PEN:.52,CNY_USD:.137,USD_CNY:7.3,USD_BRL:5.49,USD_MXN:15.92,USD_ARS:7920,USD_COP:33900,USD_CLP:7190,USD_PEN:3.8};
+var SYMBOLS={BRL:'R$',MXN:'MX$',ARS:'ARS$',COP:'COP$',CLP:'CL$',PEN:'S/',CNY:'¥',USD:'$'};
+
+async function fetchRates(){
+  try{
+    var resp=await fetch('https://api.exchangerate-api.com/v4/latest/CNY');
+    var data=await resp.json();
+    liveRates=data.rates;
+    document.getElementById('liveBadge').innerHTML='<span class="live-badge">实时</span>';
+    console.log('✅ 汇率已更新:',new Date().toLocaleString('zh-CN'));
+    updateExchange();
+  }catch(e){
+    console.warn('⚠️ 获取实时汇率失败，使用缓存:',e.message);
+    liveRates=null;
+    document.getElementById('liveBadge').innerHTML='<span class="offline-badge">离线</span>';
+    updateExchange();
+  }
+}
+
+function getRate(from,to){
+  if(from===to)return 1;
+  if(liveRates){
+    var cnyFrom=liveRates[from];
+    if(!cnyFrom&&from!=='CNY'){
+      var usdKey='USD_'+from;
+      if(FALLBACK_RATES[usdKey])cnyFrom=FALLBACK_RATES.CNY_USD/FALLBACK_RATES[usdKey];
+      else return null;
+    }
+    var cnyTo=liveRates[to];
+    if(cnyTo&&cnyFrom)return cnyTo/cnyFrom;
+  }
+  var dk=from+'_'+to;
+  if(FALLBACK_RATES[dk])return FALLBACK_RATES[dk];
+  var a=FALLBACK_RATES[from+'_USD']||FALLBACK_RATES[from+'_CNY'];
+  var b=FALLBACK_RATES[to+'_USD']||FALLBACK_RATES[to+'_CNY'];
+  if(a&&b)return a/b;
+  var cf=FALLBACK_RATES['USD_'+from],ct=FALLBACK_RATES['USD_'+to];
+  if(cf&&ct)return ct/cf;
+  return null;
+}
+
+function fmtNum(n){if(n>=1e4)return n.toFixed(0);if(n>=100)return n.toFixed(2);return n.toFixed(4)}
+
+function updateExchange(){
+  var f=document.getElementById('fromCurrency').value,t=document.getElementById('toCurrency').value,a=parseFloat(document.getElementById('exchangeAmount').value)||0;
+  var r=getRate(f,t);
+  if(!r){document.getElementById('exchangeOutput').textContent='-';document.getElementById('exchangeRate').textContent='暂无汇率数据';return}
+  var sym=SYMBOLS[t]||'';
+  document.getElementById('exchangeOutput').textContent=sym+' '+fmtNum(r*a);
+  document.getElementById('exchangeRate').textContent='1 '+f+' = '+fmtNum(r)+' '+t+(liveRates?' (实时)':' (参考)');
+}
+
+function swapCurrency(){
+  var f=document.getElementById('fromCurrency'),t=document.getElementById('toCurrency');
+  var tmp=f.value;f.value=t.value;t.value=tmp;
+  updateExchange();
+}
+
+var RD={"BR-NATIONAL":{rate:.0925,name:'PIS+COFINS(联邦)',symbol:'R$',note:'累计模式 PIS 1.65%+COFINS 7.6%=9.25%。数据来源：Receita Federal do Brasil。'},"BR-SP":{rate:.18,name:'ICMS 圣保罗州',symbol:'R$',note:'圣保罗州标准 ICMS 18%。跨州运输 SP外→SP 12%；SP→SP内 4%。CONFAZ Resolution 22/2024。'},"BR-RJ":{rate:.17,name:'ICMS 里约热内卢州',symbol:'R$',note:'里约热内卢州标准 ICMS 17%。SEF-RJ。'},"BR-ISS":{rate:.05,name:'ISS 服务税',symbol:'R$',note:'市级服务税通常 5%，各城市略有差异。'},MX:{rate:.16,name:'墨西哥 IVA(标准)',symbol:'MX$',note:'全国标准 IVA 16%。边境区 ZOFRI 为 8%。零税率适用于出口、农产品、药品等。SAT México。'},'MX-BORDER':{rate:.08,name:'墨西哥 IVA(边境区)',symbol:'MX$',note:'北部和南部边境特殊经济区享受 8% 优惠 IVA。SAT México。'},AR:{rate:.21,name:'阿根廷 IVA(标准)',symbol:'ARS$',note:'标准 IVA 21%。部分商品如新闻出版物、体育赛事 10.5%。AFIP Argentina。'},'AR-REDUCED':{rate:.105,name:'阿根廷 IVA(减免)',symbol:'ARS$',note:'减免税率 10.5%，适用于部分基本商品和服务。AFIP Argentina。'},'AR-GROSS':{rate:.035,name:'阿根廷 Ingresos Brutos',symbol:'ARS$',note:'省级毛税，各州不同约 1%-10%，通常 3.5%。可能与 IVA 叠加征收。各省税务当局。'},CO:{rate:.19,name:'哥伦比亚 IVA(标准)',symbol:'COP$',note:'标准 IVA 19%。部分必需品(食品、医疗、教育)适用 5% 或免税。DIAN Colombia。},'CO-REDUCED':{rate:.05,name:'哥伦比亚 IVA(减免)',symbol:'COP$',note:'减免税率 5%。DIAN Colombia。'},CL:{rate:.19,name:'智利 IVA',symbol:'CL$',note:'标准 IVA 19%。出口适用 0%。大部分商品和服务均征税。SERNAC Chile。'},PE:{rate:.18,name:'秘鲁 IGV',symbol:'S/',note:'General Sales Tax 18%。出口适用 0%。部分商品如粮食、图书免税。SUNAT Perú。'}};
+
+function fc(amt,c){var d=RD[c],s=d?d.symbol:'$';return s+' '+amt.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+
+function calculateTax(){
+  var c=document.getElementById('countrySelect').value,a=parseFloat(document.getElementById('taxAmount').value),ct=document.getElementById('calcType').value;
+  if(!c){alert('请先选择一个国家');return}
+  if(isNaN(a)||a<=0){alert('请输入有效金额');return}
+  var d=RD[c];if(!d)return;
+  var sub,tax,total;
+  if(ct==='add'){sub=a;tax=a*d.rate;total=a+tax}else{total=a;sub=a/(1+d.rate);tax=a-sub}
+  document.getElementById('resSubtotal').textContent=fc(sub,c);
+  document.getElementById('resTax').textContent=fc(tax,c);
+  document.getElementById('resTotal').textContent=fc(total,c);
+  var ne=document.getElementById('rateNote');
+  var rs=d.rate<.01?(d.rate*100).toFixed(2)+'%':(d.rate*100).toFixed(d.rate<.1?2:0)+'%';
+  ne.innerHTML='<strong>'+d.name+'</strong> · 税率 '+rs+'<br>'+d.note;
+  var r=document.getElementById('taxResult');r.classList.remove('show');void r.offsetWidth;r.classList.add('show');
+}
+
+function calculateProfit(){
+  var sp=parseFloat(document.getElementById('salePrice').value)||0,cp=parseFloat(document.getElementById('costPrice').value)||0,sc=parseFloat(document.getElementById('shippingCost').value)||0,pfp=(parseFloat(document.getElementById('platformFee').value)||0)/100,oc=parseFloat(document.getElementById('otherCost').value)||0,payfp=(parseFloat(document.getElementById('paymentFee').value)||0)/100,country=document.getElementById('profitCountry').value,fx=parseFloat(document.getElementById('fxRate').value)||0;
+  var d=RD[country],sym=d?d.symbol:'$',tr=d?d.rate:0;
+  var pf=sp*pfp,payf=sp*payfp,tax=sp*tr;
+  var spCNY=fx>0?sp/fx:sp;
+  var tc=cp+sc+(pf/fx)+(payf/fx)+(tax/fx)+oc;
+  var profit=spCNY-tc;
+  var pr=spCNY>0?(profit/spCNY*100):0;
+  document.getElementById('prSale').textContent='¥'+spCNY.toFixed(2);
+  document.getElementById('prCost').textContent='¥'+tc.toFixed(2);
+  var pe=document.getElementById('prProfit');pe.textContent='¥'+profit.toFixed(2);pe.className='result-value '+(profit>=0?'profit':'loss');
+  var su=document.getElementById('prSummary');
+  su.innerHTML='<li><span>销售价 ('+sym+' '+sp.toFixed(2)+')</span><span>¥'+spCNY.toFixed(2)+'</span></li>'+
+    '<li><span>商品成本</span><span>-¥'+cp.toFixed(2)+'</span></li>'+
+    '<li><span>运费</span><span>-¥'+sc.toFixed(2)+'</span></li>'+
+    '<li><span>平台佣金 ('+(pfp*100).toFixed(0)+'%)</span><span>-¥'+(pf/fx||0).toFixed(2)+'</span></li>'+
+    '<li><span>付款手续费 ('+(payfp*100).toFixed(0)+'%)</span><span>-¥'+(payf/fx||0).toFixed(2)+'</span></li>'+
+    '<li><span>进口税费 ('+(tr*100).toFixed(0)+'%)</span><span>-¥'+(tax/fx||0).toFixed(2)+'</span></li>'+
+    '<li><span>其他费用</span><span>-¥'+oc.toFixed(2)+'</span></li>'+
+    '<li><span>净利润率</span><span class=\''+(pr>=0?'highlight-green':'highlight-red')+'\'>'+pr.toFixed(1)+'%</span></li>';
+  document.getElementById('profitResult').classList.add('show');
+}
+
+fetchRates();
+setInterval(fetchRates,300000);
 updateExchange();
 </script>
 </body>
