@@ -3,256 +3,209 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>拉美税率计算器</title>
+<title>拉美跨境电商工具箱</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; background: #f5f6fa; color: #1a1a2e; min-height: 100vh; }
-  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: #fff; padding: 36px 20px 32px; text-align: center; position: relative; }
-  .header::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 20px; background: #f5f6fa; border-radius: 20px 20px 0 0; }
-  .header h1 { font-size: 26px; margin-bottom: 6px; letter-spacing: 1px; }
-  .header p { opacity: 0.85; font-size: 13px; }
-  .container { max-width: 860px; margin: 0 auto; padding: 20px 16px 40px; }
-  .card { background: #fff; border-radius: 14px; box-shadow: 0 1px 8px rgba(0,0,0,0.06); padding: 24px; margin-bottom: 18px; }
-  .card h2 { font-size: 17px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; color: #1a1a2e; }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-  @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
-  label { font-size: 12px; font-weight: 600; color: #666; margin-bottom: 5px; display: block; text-transform: uppercase; letter-spacing: 0.3px; }
-  select, input[type="number"] { width: 100%; padding: 10px 12px; border: 1.5px solid #e0e3eb; border-radius: 8px; font-size: 14px; transition: border-color 0.2s; background: #fff; }
-  select:focus, input:focus { outline: none; border-color: #0f3460; box-shadow: 0 0 0 3px rgba(15,52,96,0.08); }
-  .btn { background: linear-gradient(135deg, #0f3460, #1a1a2e); color: #fff; border: none; padding: 12px 32px; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; width: 100%; margin-top: 4px; }
-  .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(15,52,96,0.25); }
-  .btn:active { transform: translateY(0); }
-  .result { display: none; margin-top: 18px; padding: 18px; background: linear-gradient(135deg, #f8f9ff, #eef1f8); border-radius: 10px; border-left: 4px solid #0f3460; }
-  .result.show { display: block; animation: fadeIn 0.3s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-  .result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-  @media (max-width: 600px) { .result-grid { grid-template-columns: 1fr; } }
-  .result-item { text-align: center; padding: 10px 6px; background: rgba(255,255,255,0.7); border-radius: 8px; }
-  .result-label { font-size: 11px; color: #888; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.3px; }
-  .result-value { font-size: 20px; font-weight: 700; color: #1a1a2e; }
-  .result-value.total { color: #0f3460; font-size: 24px; }
-  .rate-note { font-size: 12px; color: #666; margin-top: 12px; line-height: 1.7; padding: 12px; background: rgba(255,255,255,0.8); border-radius: 6px; }
-  .rate-note strong { color: #1a1a2e; }
-  /* 数据来源 */
-  .source-bar { display: flex; align-items: center; gap: 6px; padding: 10px 14px; background: #fffbe6; border: 1px solid #ffe58f; border-radius: 8px; font-size: 12px; color: #ad6800; margin-bottom: 18px; line-height: 1.6; }
-  .source-bar .icon { font-size: 16px; flex-shrink: 0; }
-  .country-table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 13px; }
-  .country-table th { background: #f5f7fa; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #888; padding: 10px 12px; text-align: left; font-weight: 600; }
-  .country-table td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
-  .country-table tr:last-child td { border-bottom: none; }
-  .country-table tr:hover td { background: #fafbff; }
-  .flag { font-size: 18px; margin-right: 4px; vertical-align: middle; }
-  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap; }
-  .tag-standard { background: #e8f4fd; color: #0f3460; }
-  .tag-special { background: #fff3e0; color: #e65100; }
-  .footer { text-align: center; padding: 24px 16px; font-size: 12px; color: #bbb; line-height: 1.8; }
-  .footer a { color: #0f3460; text-decoration: none; }
-  .update-badge { display: inline-block; padding: 3px 10px; background: rgba(255,255,255,0.15); border-radius: 20px; font-size: 11px; margin-top: 8px; }
-  .disclaimer { font-size: 11px; color: #999; text-align: center; padding: 8px; background: #fafafa; border-radius: 6px; margin-top: 10px; line-height: 1.6; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:#f5f6fa;color:#1a1a2e;min-height:100vh}
+.header{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;padding:32px 20px 40px;text-align:center;position:relative}
+.header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:24px;background:#f5f6fa;border-radius:24px 24px 0 0}
+.header h1{font-size:24px;margin-bottom:6px;letter-spacing:1px}
+.header p{opacity:.8;font-size:13px}
+.container{max-width:700px;margin:0 auto;padding:0 16px 40px}
+.tabs{display:flex;gap:6px;margin:24px 0 16px;overflow-x:auto;padding-bottom:4px}
+.tab-btn{flex-shrink:0;padding:10px 18px;border-radius:10px;border:none;background:#fff;color:#666;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.tab-btn.active{background:#0f3460;color:#fff;box-shadow:0 2px 12px rgba(15,52,96,.3)}
+.tab-content{display:none}
+.tab-content.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.card{background:#fff;border-radius:14px;box-shadow:0 1px 8px rgba(0,0,0,.06);padding:24px;margin-bottom:16px}
+.card h2{font-size:16px;margin-bottom:16px;display:flex;align-items:center;gap:8px;color:#1a1a2e}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:600px){.form-row{grid-template-columns:1fr}}
+label{font-size:12px;font-weight:600;color:#666;margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.3px}
+select,input[type=number],input[type=text]{width:100%;padding:10px 12px;border:1.5px solid #e0e3eb;border-radius:8px;font-size:14px;transition:border-color .2s;background:#fff}
+select:focus,input:focus{outline:none;border-color:#0f3460;box-shadow:0 0 0 3px rgba(15,52,96,.08)}
+.btn{background:linear-gradient(135deg,#0f3460,#1a1a2e);color:#fff;border:none;padding:12px 32px;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;transition:transform .15s,box-shadow .15s;width:100%;margin-top:8px}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(15,52,96,.25)}
+.btn:active{transform:translateY(0)}
+.result{display:none;margin-top:18px;padding:18px;background:linear-gradient(135deg,#f8f9ff,#eef1f8);border-radius:10px;border-left:4px solid #0f3460}
+.result.show{display:block;animation:fadeIn .3s ease}
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+@media(max-width:600px){.result-grid{grid-template-columns:1fr}}
+.result-item{text-align:center;padding:12px 8px;background:rgba(255,255,255,.7);border-radius:8px}
+.result-label{font-size:11px;color:#888;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
+.result-value{font-size:22px;font-weight:700;color:#1a1a2e}
+.result-value.total{color:#0f3460;font-size:26px}
+.result-value.profit{color:#16a34a;font-size:26px}
+.result-value.loss{color:#dc2626;font-size:26px}
+.rate-note{font-size:12px;color:#666;margin-top:12px;line-height:1.7;padding:12px;background:rgba(255,255,255,.8);border-radius:6px}
+.rate-note strong{color:#1a1a2e}
+.currency-display{text-align:center;padding:20px;background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border-radius:10px;margin-top:12px}
+.currency-display .big{font-size:32px;font-weight:700;color:#0f3460}
+.currency-display .small{font-size:13px;color:#666;margin-top:4px}
+.swap-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;border:2px solid #e0e3eb;background:#fff;cursor:pointer;font-size:18px;transition:all .2s;margin:10px auto}
+.swap-btn:hover{border-color:#0f3460;background:#0f3460;color:#fff}
+.source-bar{display:flex;align-items:center;gap:6px;padding:10px 14px;background:#fffbe6;border:1px solid #ffe58f;border-radius:8px;font-size:12px;color:#ad6800;margin-bottom:18px;line-height:1.6}
+.source-bar .icon{font-size:16px;flex-shrink:0}
+.footer{text-align:center;padding:24px 16px;font-size:12px;color:#bbb;line-height:1.8}
+.disclaimer{font-size:11px;color:#999;text-align:center;padding:8px;background:#fafafa;border-radius:6px;margin-top:10px;line-height:1.6}
+.summary-list{list-style:none;padding:0}
+.summary-list li{padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:14px;display:flex;justify-content:space-between}
+.summary-list li:last-child{border-bottom:none;font-weight:700}
+.highlight-green{color:#16a34a}
+.highlight-red{color:#dc2626}
 </style>
 </head>
 <body>
-
 <div class="header">
-  <h1>🌎 拉美税率计算器</h1>
-  <p>巴西 · 墨西哥 · 阿根廷 · 哥伦比亚 · 智利 · 秘鲁</p>
-  <div class="update-badge">📅 数据更新于 2026-07</div>
+<h1>🌎 拉美跨境电商工具箱</h1>
+<p>汇率 · 税率 · 利润计算</p>
 </div>
-
 <div class="container">
-  <!-- 数据来源说明 -->
-  <div class="source-bar">
-    <span class="icon">ℹ️</span>
-    <span>税率数据来源于各国税务机关公开信息，仅供参考。实际税率以当地税务局最新公告为准。跨境交易建议咨询专业税务顾问或使用 TaxJar/Avalara 等专业服务。</span>
-  </div>
-
-  <!-- 计算器 -->
-  <div class="card">
-    <h2>💰 快速计算</h2>
-    <label>选择国家 / 税种</label>
-    <select id="countrySelect">
-      <option value="">— 请选择 —</option>
-      <optgroup label="🇧🇷 巴西 (Brazil)">
-        <option value="BR-SP">圣保罗州 ICMS (18%)</option>
-        <option value="BR-RJ">里约热内卢州 ICMS (17%)</option>
-        <option value="BR-AM">亚马孙州 ICMS (15%)</option>
-        <option value="BR-NATIONAL">PIS + COFINS 联邦税 (~9.25%)</option>
-      </optgroup>
-      <optgroup label="🇲🇽 墨西哥 (Mexico)">
-        <option value="MX">全国标准 IVA (16%)</option>
-        <option value="MX-BORDER">边境区优惠 IVA (8%)</option>
-      </optgroup>
-      <optgroup label="🇦🇷 阿根廷 (Argentina)">
-        <option value="AR">标准 IVA (21%)</option>
-        <option value="AR-REDUCED">减免税率 IVA (10.5%)</option>
-        <option value="AR-GROSS">省级毛税 Ingresos Brutos (~3.5%)</option>
-      </optgroup>
-      <optgroup label="🇨🇴 哥伦比亚 (Colombia)">
-        <option value="CO">标准 IVA (19%)</option>
-        <option value="CO-REDUCED">减免税率 IVA (5%)</option>
-      </optgroup>
-      <optgroup label="🇨🇱 智利 (Chile)">
-        <option value="CL">IVA (19%)</option>
-      </optgroup>
-      <optgroup label="🇵🇪 秘鲁 (Peru)">
-        <option value="PE">IGV (18%)</option>
-      </optgroup>
-      <optgroup label="🇪🇨 🇺🇾 🇵🇾 其他">
-        <option value="EC">厄瓜多尔 IVA (12%)</option>
-        <option value="UY">乌拉圭 IVA (22%)</option>
-        <option value="PY">巴拉圭 ITBIS (10%)</option>
-      </optgroup>
-    </select>
-
-    <div class="form-row" style="margin-top:14px;">
-      <div>
-        <label>金额</label>
-        <input type="number" id="amount" placeholder="输入金额" step="0.01" min="0">
-      </div>
-      <div>
-        <label>计算类型</label>
-        <select id="calcType">
-          <option value="add">加税（不含税 → 含税）</option>
-          <option value="remove">拆税（含税 → 不含税）</option>
-        </select>
-      </div>
-    </div>
-
-    <button class="btn" onclick="calculate()">🔢 计 算</button>
-
-    <div class="result" id="result">
-      <div class="result-grid">
-        <div class="result-item">
-          <div class="result-label">税前金额</div>
-          <div class="result-value" id="resSubtotal">-</div>
-        </div>
-        <div class="result-item">
-          <div class="result-label">税额</div>
-          <div class="result-value" id="resTax">-</div>
-        </div>
-        <div class="result-item">
-          <div class="result-label">含税总价</div>
-          <div class="result-value total" id="resTotal">-</div>
-        </div>
-      </div>
-      <div class="rate-note" id="rateNote"></div>
-      <div class="disclaimer">⚠️ 本结果仅供商务参考，不构成税务建议。正式业务请咨询当地税务专业人士。</div>
-    </div>
-  </div>
-
-  <!-- 税率速查表 -->
-  <div class="card">
-    <h2>📋 拉美主要国家税率速查</h2>
-    <table class="country-table">
-      <thead>
-        <tr><th>国家</th><th>税种</th><th>税率</th><th>说明</th></tr>
-      </thead>
-      <tbody>
-        <tr><td><span class="flag">🇧🇷</span>巴西</td><td>ICMS (州增值税)</td><td><span class="tag tag-standard">5%–19%</span></td><td>各州不同，跨州运输 4%/7%/12%</td></tr>
-        <tr><td></td><td>PIS + COFINS</td><td><span class="tag tag-standard">~9.25%</span></td><td>联邦税，累进模式征收</td></tr>
-        <tr><td></td><td>ISS (服务税)</td><td><span class="tag tag-standard">2%–5%</span></td><td>城市级，按服务类型</td></tr>
-        <tr><td><span class="flag">🇲🇽</span>墨西哥</td><td>IVA</td><td><span class="tag tag-standard">16%</span></td><td>边境区 8%，出口 0%</td></tr>
-        <tr><td><span class="flag">🇦🇷</span>阿根廷</td><td>IVA</td><td><span class="tag tag-standard">21%</span></td><td>减免品 10.5%，部分免税</td></tr>
-        <tr><td></td><td>Ingresos Brutos</td><td><span class="tag tag-special">~3.5%</span></td><td>各省不同，可能与 IVA 叠加</td></tr>
-        <tr><td><span class="flag">🇨🇴</span>哥伦比亚</td><td>IVA</td><td><span class="tag tag-standard">19%</span></td><td>必需品 5% 或免税</td></tr>
-        <tr><td><span class="flag">🇨🇱</span>智利</td><td>IVA</td><td><span class="tag tag-standard">19%</span></td><td>出口 0%</td></tr>
-        <tr><td><span class="flag">🇵🇪</span>秘鲁</td><td>IGV</td><td><span class="tag tag-standard">18%</span></td><td>出口 0%，部分免税</td></tr>
-        <tr><td><span class="flag">🇪🇨</span>厄瓜多尔</td><td>IVA</td><td><span class="tag tag-standard">12%</span></td><td>基本生活品免税</td></tr>
-        <tr><td><span class="flag">🇺🇾</span>乌拉圭</td><td>IVA</td><td><span class="tag tag-standard">22%</span></td><td>拉美最高 IVA</td></tr>
-        <tr><td><span class="flag">🇵🇾</span>巴拉圭</td><td>ITBIS</td><td><span class="tag tag-standard">~10%</span></td><td>无传统 IVA，有间接税</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- 巴西跨州税率参考 -->
-  <div class="card">
-    <h2>🚚 巴西 ICMS 跨州税率参考</h2>
-    <table class="country-table">
-      <thead>
-        <tr><th>交易类型</th><th>税率</th><th>说明</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>州内交易</td><td><span class="tag tag-standard">7%–12%</span></td><td>各州自行设定</td></tr>
-        <tr><td>来自 SP 以外 → SP</td><td><span class="tag tag-standard">12%</span></td><td>目的地税率</td></tr>
-        <tr><td>SP → 其他州</td><td><span class="tag tag-standard">7%</span></td><td>起征点 7%</td></tr>
-        <tr><td>非 SP 州之间</td><td><span class="tag tag-standard">4%</span></td><td>最低税率</td></tr>
-      </tbody>
-    </table>
-  </div>
+<div class="tabs">
+<button class="tab-btn active" onclick="switchTab('exchange')">💱 汇率换算</button>
+<button class="tab-btn" onclick="switchTab('tax')">🧮 税率计算</button>
+<button class="tab-btn" onclick="switchTab('profit')">📊 利润计算</button>
 </div>
-
+<div id="tab-exchange" class="tab-content active">
+<div class="card">
+<h2>💱 实时汇率换算</h2>
+<div class="source-bar"><span class="icon">⚠️</span>汇率为参考值，实际以银行/支付平台为准。建议下单前确认最新汇率。</div>
+<div class="form-row">
+<div><label>从</label>
+<select id="fromCurrency" onchange="updateExchange()">
+<option value="CNY">🇨🇳 人民币 (CNY)</option>
+<option value="USD">🇺🇸 美元 (USD)</option>
+</select>
+<input type="number" id="exchangeAmount" placeholder="输入金额" value="1000" oninput="updateExchange()" style="margin-top:6px;"></div>
+<div><label>到</label>
+<select id="toCurrency" onchange="updateExchange()">
+<option value="BRL">🇧🇷 巴西雷亚尔 (BRL)</option>
+<option value="MXN">🇲🇽 墨西哥比索 (MXN)</option>
+<option value="ARS">🇦🇷 阿根廷比索 (ARS)</option>
+<option value="COP">🇨🇴 哥伦比亚比索 (COP)</option>
+<option value="CLP">🇨🇱 智利比索 (CLP)</option>
+<option value="PEN">🇵🇪 秘鲁索尔 (PEN)</option>
+<option value="USD">🇺🇸 美元 (USD)</option>
+</select>
+<div class="currency-display" id="exchangeResult">
+<div class="big" id="exchangeOutput">-</div>
+<div class="small" id="exchangeRate">选择货币查看汇率</div>
+</div></div>
+</div>
+<div style="text-align:center;"><button class="swap-btn" onclick="swapCurrency()" title="互换货币">⇄</button></div>
+<div class="disclaimer">💡 提示：拉美多国对美元结算更友好，建议收款时优先使用 USD。部分国家如阿根廷有官方汇率和黑市汇率差异。</div>
+</div></div>
+<div id="tab-tax" class="tab-content">
+<div class="card">
+<h2>🧮 进口税费估算</h2>
+<div class="source-bar"><span class="icon">⚠️</span>以下税率为进口环节参考税率，实际以各国海关核定为准。不含增值税抵扣、免税额度等特殊情况。</div>
+<label>选择国家</label>
+<select id="countrySelect" style="margin-bottom:14px;">
+<optgroup label="🇧🇷 巴西">
+<option value="BR-NATIONAL">PIS + COFINS (联邦综合 9.25%)</option>
+<option value="BR-SP">ICMS 圣保罗州 (18%)</option>
+<option value="BR-RJ">ICMS 里约热内卢州 (17%)</option>
+<option value="BR-ISS">ISS 服务税 (约 5%)</option>
+</optgroup>
+<optgroup label="🇲🇽 墨西哥">
+<option value="MX">IVA 标准 (16%)</option>
+<option value="MX-BORDER">IVA 边境区 (8%)</option>
+</optgroup>
+<optgroup label="🇦🇷 阿根廷">
+<option value="AR">IVA 标准 (21%)</option>
+<option value="AR-REDUCED">IVA 减免 (10.5%)</option>
+<option value="AR-GROSS">Ingresos Brutos 省税 (~3.5%)</option>
+</optgroup>
+<optgroup label="🇨🇴 哥伦比亚">
+<option value="CO">IVA 标准 (19%)</option>
+<option value="CO-REDUCED">IVA 减免 (5%)</option>
+</optgroup>
+<optgroup label="🇨🇱 智利">
+<option value="CL">IVA 标准 (19%)</option>
+</optgroup>
+<optgroup label="🇵🇪 秘鲁">
+<option value="PE">IGV 标准 (18%)</option>
+</optgroup>
+</select>
+<div class="form-row">
+<div><label>商品金额</label>
+<input type="number" id="taxAmount" placeholder="输入金额" onkeydown="if(event.key==='Enter')calculateTax()"></div>
+<div><label>计算方式</label>
+<select id="calcType">
+<option value="add">金额 + 税费 = 总价</option>
+<option value="subtract">总价含税费，反算净价</option>
+</select></div>
+</div>
+<button class="btn" onclick="calculateTax()">计算税费</button>
+<div class="result" id="taxResult">
+<div class="result-grid">
+<div class="result-item"><div class="result-label">净价</div><div class="result-value" id="resSubtotal">-</div></div>
+<div class="result-item"><div class="result-label">税费</div><div class="result-value" id="resTax">-</div></div>
+<div class="result-item"><div class="result-label">总价</div><div class="result-value total" id="resTotal">-</div></div>
+</div>
+<div class="rate-note" id="rateNote"></div>
+</div></div></div>
+<div id="tab-profit" class="tab-content">
+<div class="card">
+<h2>📊 跨境订单利润计算器</h2>
+<div class="source-bar"><span class="icon">💡</span>输入订单信息，自动计算各项成本和净利润率。帮助快速评估订单盈亏。</div>
+<div class="form-row">
+<div><label>销售价 (本币)</label>
+<input type="number" id="salePrice" placeholder="如 299" oninput="calculateProfit()"></div>
+<div><label>成本价 (人民币)</label>
+<input type="number" id="costPrice" placeholder="如 80" oninput="calculateProfit()"></div>
+</div>
+<div class="form-row">
+<div><label>运费 (人民币)</label>
+<input type="number" id="shippingCost" placeholder="如 35" oninput="calculateProfit()"></div>
+<div><label>平台佣金 (%)</label>
+<input type="number" id="platformFee" placeholder="如 15" value="15" oninput="calculateProfit()"></div>
+</div>
+<div class="form-row">
+<div><label>目标国家</label>
+<select id="profitCountry" onchange="calculateProfit()">
+<option value="BR-NATIONAL">🇧🇷 巴西</option>
+<option value="MX">🇲🇽 墨西哥</option>
+<option value="AR">🇦🇷 阿根廷</option>
+<option value="CO">🇨🇴 哥伦比亚</option>
+<option value="CL">🇨🇱 智利</option>
+<option value="PE">🇵🇪 秘鲁</option>
+</select></div>
+<div><label>汇率 (1 CNY → ?)</label>
+<input type="number" id="fxRate" placeholder="如 0.68" step="0.0001" oninput="calculateProfit()"></div>
+</div>
+<div class="form-row">
+<div><label>其他费用 (人民币)</label>
+<input type="number" id="otherCost" placeholder="如包装、退货等" value="0" oninput="calculateProfit()"></div>
+<div><label>付款手续费 (%)</label>
+<input type="number" id="paymentFee" placeholder="如 4" value="4" step="0.1" oninput="calculateProfit()"></div>
+</div>
+<div class="result" id="profitResult">
+<div class="result-grid">
+<div class="result-item"><div class="result-label">销售收入</div><div class="result-value" id="prSale">-</div></div>
+<div class="result-item"><div class="result-label">总成本</div><div class="result-value" id="prCost">-</div></div>
+<div class="result-item"><div class="result-label">净利润</div><div class="result-value" id="prProfit">-</div></div>
+</div>
+<ul class="summary-list" id="prSummary"></ul>
+</div></div></div>
+</div>
 <div class="footer">
-  拉美税率计算器 · 数据仅供参考 · 2026<br>
-  正式税务合规请使用 <a href="https://www.taxjar.com/" target="_blank">TaxJar</a> 或 <a href="https://www.avalara.com/" target="_blank">Avalara</a>
+<p>拉美跨境电商工具箱 · 数据仅供参考</p>
+<p>如有疑问请联系客服 | 数据更新于 2026-07-14</p>
 </div>
-
 <script>
-const RATE_DATA = {
-  'BR-SP':       { rate: 0.18, name: '圣保罗州 ICMS', symbol: 'R$', note: '圣保罗州标准 ICMS 为 18%。跨州运输：来自 SP 以外→SP 为 12%；SP→SP 内为 4%。数据来源：CONFAZ Resolution 22/2024。' },
-  'BR-RJ':       { rate: 0.17, name: '里约热内卢州 ICMS', symbol: 'R$', note: '里约热内卢州标准 ICMS 为 17%。数据来源：SEF-RJ。' },
-  'BR-AM':       { rate: 0.15, name: '亚马孙州 ICMS', symbol: 'R$', note: '亚马孙州为鼓励开发，ICMS 较低，标准 15%。数据来源：SEFAZ-AM。' },
-  'BR-NATIONAL': { rate: 0.0925, name: 'PIS + COFINS (联邦)', symbol: 'R$', note: '累计模式 PIS 1.65% + COFINS 7.6% = 9.25%。非累计模式下限 0.65%+3%，上限 2.65%+11%。数据来源：Receita Federal do Brasil。' },
-  'MX':          { rate: 0.16, name: '墨西哥 IVA (标准)', symbol: 'MX$', note: '全国标准 IVA 16%。边境区 (ZOFRI) 为 8%。零税率适用于出口、农产品、药品等。数据来源：SAT México。' },
-  'MX-BORDER':   { rate: 0.08, name: '墨西哥 IVA (边境区)', symbol: 'MX$', note: '北部和南部边境特殊经济区享受 8% 优惠 IVA。数据来源：SAT México。' },
-  'AR':          { rate: 0.21, name: '阿根廷 IVA (标准)', symbol: 'ARS$', note: '标准 IVA 21%。部分商品如新闻出版物、体育赛事 10.5%。食品、医药部分免税。数据来源：AFIP Argentina。' },
-  'AR-REDUCED':  { rate: 0.105, name: '阿根廷 IVA (减免)', symbol: 'ARS$', note: '减免税率 10.5%，适用于部分商品和服务。数据来源：AFIP Argentina。' },
-  'AR-GROSS':    { rate: 0.035, name: '阿根廷 Ingresos Brutos', symbol: 'ARS$', note: '省级毛税，各州不同约 1%-10%，通常 3.5%。可能与 IVA 叠加征收。数据来源：各省税务当局。' },
-  'CO':          { rate: 0.19, name: '哥伦比亚 IVA (标准)', symbol: 'COP$', note: '标准 IVA 19%。部分必需品 (食品、医疗、教育) 适用 5% 或免税。数据来源：DIAN Colombia。' },
-  'CO-REDUCED':  { rate: 0.05, name: '哥伦比亚 IVA (减免)', symbol: 'COP$', note: '减免税率 5%，适用于部分基本商品和服务。数据来源：DIAN Colombia。' },
-  'CL':          { rate: 0.19, name: '智利 IVA', symbol: 'CL$', note: '标准 IVA 19%。出口适用 0%。大部分商品和服务均征税。数据来源：SERNAC Chile。' },
-  'PE':          { rate: 0.18, name: '秘鲁 IGV', symbol: 'S/', note: 'General Sales Tax (IGV) 18%。出口适用 0%。部分商品如粮食、图书免税。数据来源：SUNAT Perú。' },
-  'EC':          { rate: 0.12, name: '厄瓜多尔 IVA', symbol: 'US$', note: '标准 IVA 12%。基本生活品、药品、教育服务免税。数据来源：SRI Ecuador。' },
-  'UY':          { rate: 0.22, name: '乌拉圭 IVA', symbol: 'UY$', note: '标准 IVA 22%，拉美最高。部分商品适用 0% 或免税。数据来源：DGI Uruguay。' },
-  'PY':          { rate: 0.10, name: '巴拉圭 ITBIS', symbol: 'Gs.', note: '巴拉圭无传统 IVA，但有 ITBIS (间接税) 约 10%。另有 3% 出口税。数据来源：SET Paraguay。' },
-};
-
-function formatCurrency(amount, country) {
-  const data = RATE_DATA[country];
-  const sym = data ? data.symbol : '$';
-  return sym + ' ' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
-
-function calculate() {
-  const country = document.getElementById('countrySelect').value;
-  const amount = parseFloat(document.getElementById('amount').value);
-  const calcType = document.getElementById('calcType').value;
-
-  if (!country) { alert('请先选择一个国家'); return; }
-  if (isNaN(amount) || amount <= 0) { alert('请输入有效金额'); return; }
-
-  const data = RATE_DATA[country];
-  if (!data) return;
-
-  let subtotal, tax, total;
-
-  if (calcType === 'add') {
-    subtotal = amount;
-    tax = amount * data.rate;
-    total = amount + tax;
-  } else {
-    total = amount;
-    subtotal = amount / (1 + data.rate);
-    tax = amount - subtotal;
-  }
-
-  document.getElementById('resSubtotal').textContent = formatCurrency(subtotal, country);
-  document.getElementById('resTax').textContent = formatCurrency(tax, country);
-  document.getElementById('resTotal').textContent = formatCurrency(total, country);
-
-  const noteEl = document.getElementById('rateNote');
-  const rateStr = data.rate < 0.01 ? (data.rate * 100).toFixed(2) + '%' : (data.rate * 100).toFixed(data.rate < 0.1 ? 2 : 0) + '%';
-  noteEl.innerHTML = '<strong>' + data.name + '</strong> · 税率 ' + rateStr + '<br>' + data.note;
-
-  const resultEl = document.getElementById('result');
-  resultEl.classList.remove('show');
-  void resultEl.offsetWidth;
-  resultEl.classList.add('show');
-}
-
-document.getElementById('amount').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') calculate();
-});
+function switchTab(n){document.querySelectorAll('.tab-btn').forEach((b,i)=>{b.classList.toggle('active',['exchange','tax','profit'][i]===n)});document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));document.getElementById('tab-'+n).classList.add('active')}
+const EXR={CNY_BRL:.752,CNY_MXN:2.18,CNY_ARS:1085,CNY_COP:4650,CNY_CLP:985,CNY_PEN:.52,CNY_USD:.137,USD_CNY:7.3,USD_BRL:5.49,USD_MXN:15.92,USD_ARS:7920,USD_COP:33900,USD_CLP:7190,USD_PEN:3.8};
+function getRate(f,t){if(f===t)return 1;if(EXR[f+'_'+t])return EXR[f+'_'+t];const a=EXR[f+'_USD']||EXR[f+'_CNY'],b=EXR[t+'_USD']||EXR[t+'_CNY'];if(a&&b)return a/b;const c=EXR['USD_'+f],d=EXR['USD_'+t];if(c&&d)return d/c;return null}
+function updateExchange(){const f=document.getElementById('fromCurrency').value,t=document.getElementById('toCurrency').value,a=parseFloat(document.getElementById('exchangeAmount').value)||0,r=getRate(f,t);if(!r){document.getElementById('exchangeOutput').textContent='-';document.getElementById('exchangeRate').textContent='暂无汇率数据';return}const sm={BRL:'R$',MXN:'MX$',ARS:'ARS$',COP:'COP$',CLP:'CL$',PEN:'S/',CNY:'¥',USD:'$'};document.getElementById('exchangeOutput').textContent=(sm[t]||'')+' '+fn(r*a);document.getElementById('exchangeRate').textContent='1 '+f+' = '+fn(r)+' '+t}
+function swapCurrency(){const f=document.getElementById('fromCurrency'),t=document.getElementById('toCurrency');[f.value,t.value]=[t.value,f.value];updateExchange()}
+function fn(n){if(n>=1e4)return n.toFixed(0);if(n>=100)return n.toFixed(2);return n.toFixed(4)}
+const RD={"BR-NATIONAL":{rate:.0925,name:'PIS+COFINS(联邦)',symbol:'R$',note:'累计模式 PIS 1.65%+COFINS 7.6%=9.25%。数据来源：Receita Federal do Brasil。'},"BR-SP":{rate:.18,name:'ICMS 圣保罗州',symbol:'R$',note:'圣保罗州标准 ICMS 18%。跨州运输 SP外→SP 12%；SP→SP内 4%。CONFAZ Resolution 22/2024。'},"BR-RJ":{rate:.17,name:'ICMS 里约热内卢州',symbol:'R$',note:'里约热内卢州标准 ICMS 17%。SEF-RJ。'},"BR-ISS":{rate:.05,name:'ISS 服务税',symbol:'R$',note:'市级服务税通常 5%，各城市略有差异。'},MX:{rate:.16,name:'墨西哥 IVA(标准)',symbol:'MX$',note:'全国标准 IVA 16%。边境区 ZOFRI 为 8%。零税率适用于出口、农产品、药品等。SAT México。'},'MX-BORDER':{rate:.08,name:'墨西哥 IVA(边境区)',symbol:'MX$',note:'北部和南部边境特殊经济区享受 8% 优惠 IVA。SAT México。'},AR:{rate:.21,name:'阿根廷 IVA(标准)',symbol:'ARS$',note:'标准 IVA 21%。部分商品如新闻出版物、体育赛事 10.5%。AFIP Argentina。'},'AR-REDUCED':{rate:.105,name:'阿根廷 IVA(减免)',symbol:'ARS$',note:'减免税率 10.5%，适用于部分基本商品和服务。AFIP Argentina。'},'AR-GROSS':{rate:.035,name:'阿根廷 Ingresos Brutos',symbol:'ARS$',note:'省级毛税，各州不同约 1%-10%，通常 3.5%。可能与 IVA 叠加征收。各省税务当局。'},CO:{rate:.19,name:'哥伦比亚 IVA(标准)',symbol:'COP$',note:'标准 IVA 19%。部分必需品(食品、医疗、教育)适用 5% 或免税。DIAN Colombia。},'CO-REDUCED':{rate:.05,name:'哥伦比亚 IVA(减免)',symbol:'COP$',note:'减免税率 5%。DIAN Colombia。'},CL:{rate:.19,name:'智利 IVA',symbol:'CL$',note:'标准 IVA 19%。出口适用 0%。大部分商品和服务均征税。SERNAC Chile。'},PE:{rate:.18,name:'秘鲁 IGV',symbol:'S/',note:'General Sales Tax 18%。出口适用 0%。部分商品如粮食、图书免税。SUNAT Perú。'}};
+function fc(amt,c){const d=RD[c],s=d?d.symbol:'$';return s+' '+amt.toFixed(2).replace(/\\B(?=(\\d{3})+(?!\\d))/g,',')}
+function calculateTax(){const c=document.getElementById('countrySelect').value,a=parseFloat(document.getElementById('taxAmount').value),ct=document.getElementById('calcType').value;if(!c){alert('请先选择一个国家');return}if(isNaN(a)||a<=0){alert('请输入有效金额');return}const d=RD[c];if(!d)return;let sub,tax,total;if(ct==='add'){sub=a;tax=a*d.rate;total=a+tax}else{total=a;sub=a/(1+d.rate);tax=a-sub}document.getElementById('resSubtotal').textContent=fc(sub,c);document.getElementById('resTax').textContent=fc(tax,c);document.getElementById('resTotal').textContent=fc(total,c);const ne=document.getElementById('rateNote');const rs=d.rate<.01?(d.rate*100).toFixed(2)+'%':(d.rate*100).toFixed(d.rate<.1?2:0)+'%';ne.innerHTML='<strong>'+d.name+'</strong> · 税率 '+rs+'<br>'+d.note;const r=document.getElementById('taxResult');r.classList.remove('show');void r.offsetWidth;r.classList.add('show')}
+function calculateProfit(){const sp=parseFloat(document.getElementById('salePrice').value)||0,cp=parseFloat(document.getElementById('costPrice').value)||0,sc=parseFloat(document.getElementById('shippingCost').value)||0,pfp=(parseFloat(document.getElementById('platformFee').value)||0)/100,oc=parseFloat(document.getElementById('otherCost').value)||0,payfp=(parseFloat(document.getElementById('paymentFee').value)||0)/100,country=document.getElementById('profitCountry').value,fx=parseFloat(document.getElementById('fxRate').value)||0;const d=RD[country],sym=d?d.symbol:'$',tr=d?d.rate:0;const pf=sp*pfp,payf=sp*payfp,tax=sp*tr;const spCNY=fx>0?sp/fx:sp;const tc=cp+sc+(pf/fx)+(payf/fx)+(tax/fx)+oc;const profit=spCNY-tc;const pr=spCNY>0?(profit/spCNY*100):0;document.getElementById('prSale').textContent='¥'+spCNY.toFixed(2);document.getElementById('prCost').textContent='¥'+tc.toFixed(2);const pe=document.getElementById('prProfit');pe.textContent='¥'+profit.toFixed(2);pe.className='result-value '+(profit>=0?'profit':'loss');const su=document.getElementById('prSummary');su.innerHTML='<li><span>销售价 ('+sym+' '+sp.toFixed(2)+')</span><span>¥'+spCNY.toFixed(2)+'</span></li><li><span>商品成本</span><span>-¥'+cp.toFixed(2)+'</span></li><li><span>运费</span><span>-¥'+sc.toFixed(2)+'</span></li><li><span>平台佣金 ('+(pfp*100).toFixed(0)+'%)</span><span>-¥'+(pf/fx).toFixed(2)+'</span></li><li><span>付款手续费 ('+(payfp*100).toFixed(0)+'%)</span><span>-¥'+(payf/fx).toFixed(2)+'</span></li><li><span>进口税费 ('+(tr*100).toFixed(0)+'%)</span><span>-¥'+(tax/fx).toFixed(2)+'</span></li><li><span>其他费用</span><span>-¥'+oc.toFixed(2)+'</span></li><li><span>净利润率</span><span class=\''+(pr>=0?'highlight-green':'highlight-red')+'\'>' + pr.toFixed(1) + '%</span></li>';document.getElementById('profitResult').classList.add('show')}
+updateExchange();
 </script>
-
 </body>
 </html>
